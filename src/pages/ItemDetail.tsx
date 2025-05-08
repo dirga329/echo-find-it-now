@@ -50,7 +50,7 @@ const ItemDetail = () => {
         location: 'Downtown, Main Street',
         date: '2023-05-05',
         image: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901',
-        description: 'Lost my golden retriever named Max. He has a red collar with contact information. He's very friendly but might be scared. Last seen near the park entrance. He's about 4 years old and responds to his name. Please call if spotted or found!'
+        description: "Lost my golden retriever named Max. He has a red collar with contact information. He's very friendly but might be scared. Last seen near the park entrance. He's about 4 years old and responds to his name. Please call if spotted or found!"
       },
       {
         id: '3',
