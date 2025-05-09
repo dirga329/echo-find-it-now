@@ -11,6 +11,7 @@ import ItemDetail from "./pages/ItemDetail";
 import ReportForm from "./pages/ReportForm";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
+import About from "./pages/About";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/search" element={<SearchPage />} />
             <Route path="/login" element={<Auth />} />
             <Route path="/items/:id" element={<ItemDetail />} />
+            <Route path="/about" element={<About />} />
             <Route path="/report" element={
               <ProtectedRoute>
                 <ReportForm />
