@@ -2,32 +2,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Search, LogOut, User } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
+import { Menu, X, Search } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import UserMenu from '@/components/UserMenu';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { session } = useAuth();
   const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      await supabase.auth.signOut();
-      toast({
-        title: "Logged out",
-        description: "You have been successfully logged out"
-      });
-      navigate('/');
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "An error occurred while logging out",
-        variant: "destructive"
-      });
-    }
-  };
 
   return (
     <nav className="bg-white shadow-sm py-4">
@@ -62,28 +43,7 @@ const Navbar = () => {
               </Button>
             </Link>
             
-            {session ? (
-              <div className="flex items-center gap-2">
-                <Link to="/profile">
-                  <Button variant="outline" size="icon">
-                    <User className="h-4 w-4" />
-                  </Button>
-                </Link>
-                <Button variant="outline" onClick={handleLogout}>
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Logout
-                </Button>
-              </div>
-            ) : (
-              <div className="flex space-x-2">
-                <Link to="/login">
-                  <Button variant="outline">Login</Button>
-                </Link>
-                <Link to="/login?tab=register">
-                  <Button>Register</Button>
-                </Link>
-              </div>
-            )}
+            <UserMenu />
           </div>
           
           <div className="md:hidden">
@@ -129,36 +89,9 @@ const Navbar = () => {
                 About
               </Link>
               
-              {session ? (
-                <div className="flex flex-col space-y-2 pt-2">
-                  <Link to="/profile" onClick={() => setIsOpen(false)}>
-                    <Button variant="outline" className="w-full justify-start">
-                      <User className="h-4 w-4 mr-2" />
-                      Profile
-                    </Button>
-                  </Link>
-                  <Button 
-                    variant="outline" 
-                    className="w-full justify-start"
-                    onClick={() => {
-                      handleLogout();
-                      setIsOpen(false);
-                    }}
-                  >
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Logout
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex space-x-2 pt-2">
-                  <Link to="/login" onClick={() => setIsOpen(false)}>
-                    <Button variant="outline" size="sm">Login</Button>
-                  </Link>
-                  <Link to="/login?tab=register" onClick={() => setIsOpen(false)}>
-                    <Button size="sm">Register</Button>
-                  </Link>
-                </div>
-              )}
+              <div className="pt-2">
+                <UserMenu />
+              </div>
             </div>
           </div>
         )}

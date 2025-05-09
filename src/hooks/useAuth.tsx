@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Tables } from '@/integrations/supabase/types';
 
 interface AuthContextType {
   session: Session | null;
@@ -15,12 +16,8 @@ interface AuthContextType {
   UserAvatar: React.FC<{ className?: string }>;
 }
 
-interface UserProfile {
-  id: string;
-  full_name?: string;
-  avatar_url?: string;
-  email?: string;
-}
+// Define the UserProfile type to match the profiles table
+type UserProfile = Tables<'profiles'>;
 
 const AuthContext = createContext<AuthContextType>({
   session: null,
