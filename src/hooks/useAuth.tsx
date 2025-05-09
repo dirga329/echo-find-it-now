@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, full_name, avatar_url, email')
+        .select('*')
         .eq('id', userId)
         .single();
       
@@ -96,7 +96,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setTimeout(() => {
             // Use setTimeout to avoid recursive loops with Supabase auth
             fetchProfile(currentSession.user.id).then(profileData => {
-              setProfile(profileData);
+              if (profileData) {
+                setProfile(profileData);
+              }
             });
           }, 0);
         } else {
@@ -113,7 +115,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Fetch profile if session exists
       if (currentSession?.user?.id) {
         fetchProfile(currentSession.user.id).then(profileData => {
-          setProfile(profileData);
+          if (profileData) {
+            setProfile(profileData);
+          }
         });
       }
       
