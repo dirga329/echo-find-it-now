@@ -104,7 +104,7 @@ const ReportedItems = ({ filter }: ReportedItemsProps) => {
             <TableRow key={item.id}>
               <TableCell className="font-medium">{item.name}</TableCell>
               <TableCell>
-                <Badge variant={item.type === 'lost' ? 'destructive' : 'success'}>
+                <Badge variant={item.type === 'lost' ? 'destructive' : 'default'}>
                   {item.type === 'lost' ? 'Lost' : 'Found'}
                 </Badge>
               </TableCell>
