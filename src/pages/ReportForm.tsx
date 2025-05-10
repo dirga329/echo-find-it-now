@@ -1,6 +1,6 @@
 
-import { useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import {
   Form,
   FormControl,
@@ -28,7 +28,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { ArrowLeft, Calendar as CalendarIcon } from 'lucide-react';
+import { ArrowLeft, Calendar as CalendarIcon, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -36,6 +36,9 @@ import { z } from 'zod';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { v4 as uuidv4 } from 'uuid';
 
 const formSchema = z.object({
   type: z.enum(['lost', 'found'], {
@@ -69,7 +72,10 @@ const formSchema = z.object({
 const ReportForm = () => {
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   
   // Get the type from URL params or default to 'lost'
@@ -93,9 +99,30 @@ const ReportForm = () => {
     },
   });
 
+  // Pre-fill contact info if user is logged in
+  useEffect(() => {
+    if (user) {
+      const email = user.email;
+      if (email) {
+        form.setValue('contactEmail', email);
+      }
+    }
+  }, [user, form]);
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Image must be less than 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -104,13 +131,54 @@ const ReportForm = () => {
     }
   };
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
     
-    // Simulate API call with setTimeout
-    setTimeout(() => {
-      console.log("Form submitted:", data);
-      setIsSubmitting(false);
+    try {
+      let imageUrl = null;
+      
+      // Upload image if available
+      if (imageFile) {
+        const fileExt = imageFile.name.split('.').pop();
+        const filePath = `${uuidv4()}.${fileExt}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('item-images')
+          .upload(filePath, imageFile);
+          
+        if (uploadError) {
+          throw new Error(`Error uploading image: ${uploadError.message}`);
+        }
+        
+        // Get public URL
+        const { data: publicUrlData } = supabase.storage
+          .from('item-images')
+          .getPublicUrl(filePath);
+          
+        imageUrl = publicUrlData.publicUrl;
+      }
+      
+      // Insert item into database
+      const { error } = await supabase
+        .from('items')
+        .insert({
+          type: data.type,
+          name: data.name,
+          category: data.category,
+          date: format(data.date, 'yyyy-MM-dd'),
+          time: data.time || null,
+          location: data.location,
+          description: data.description,
+          image_url: imageUrl,
+          user_id: user?.id || null,
+          contact_name: data.contactName,
+          contact_email: data.contactEmail,
+          contact_phone: data.contactPhone || null,
+        });
+        
+      if (error) {
+        throw new Error(`Error submitting report: ${error.message}`);
+      }
       
       toast({
         title: "Report Submitted Successfully!",
@@ -118,20 +186,25 @@ const ReportForm = () => {
       });
       
       // Reset form
-      form.reset({
-        type: initialType as 'lost' | 'found',
-        name: "",
-        category: "",
-        date: undefined,
-        time: "",
-        location: "",
-        description: "",
-        contactName: "",
-        contactEmail: "",
-        contactPhone: "",
-      });
+      form.reset();
+      setImageFile(null);
       setImagePreview(null);
-    }, 1500);
+      
+      // Redirect to homepage after successful submission
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+      
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast({
+        title: "Error Submitting Report",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -341,6 +414,9 @@ const ReportForm = () => {
                             onChange={handleImageChange}
                             className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary/90"
                           />
+                          <FormDescription className="mt-1">
+                            Upload a clear photo of the item (Max: 5MB)
+                          </FormDescription>
                         </div>
                         <div className="w-1/2">
                           {imagePreview ? (
@@ -358,9 +434,6 @@ const ReportForm = () => {
                           )}
                         </div>
                       </div>
-                      <FormDescription className="mt-2">
-                        Upload a clear photo of the item to help with identification.
-                      </FormDescription>
                     </div>
                   </div>
                   
@@ -417,7 +490,7 @@ const ReportForm = () => {
                     <Button type="submit" disabled={isSubmitting}>
                       {isSubmitting ? (
                         <>
-                          <div className="animate-spin mr-2 h-4 w-4 border-t-2 border-b-2 border-white rounded-full"></div>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                           Submitting...
                         </>
                       ) : (
