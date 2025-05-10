@@ -44,6 +44,11 @@ const UserMenu = () => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
+          <Link to="/dashboard" className="cursor-pointer w-full">
+            My Dashboard
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
           <Link to="/report" className="cursor-pointer w-full">
             Report Item
           </Link>

@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import SearchPage from "./pages/SearchPage";
 import ItemDetail from "./pages/ItemDetail";
 import ReportForm from "./pages/ReportForm";
+import DashboardPage from "./pages/DashboardPage";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import About from "./pages/About";
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/login" element={<Auth />} />
             <Route path="/items/:id" element={<ItemDetail />} />
             <Route path="/about" element={<About />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/report" element={
               <ProtectedRoute>
                 <ReportForm />
