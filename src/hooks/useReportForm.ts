@@ -16,6 +16,8 @@ export const useReportForm = (initialType: 'lost' | 'found') => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -49,6 +51,51 @@ export const useReportForm = (initialType: 'lost' | 'found') => {
     }
   };
 
+  const uploadImage = async (file: File): Promise<string | null> => {
+    try {
+      setIsUploading(true);
+      setUploadProgress(0);
+      
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${uuidv4()}.${fileExt}`;
+      
+      // Simulate progress updates during upload
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          // Don't go to 100% until the upload is actually complete
+          const nextProgress = prev + Math.floor(Math.random() * 10);
+          return Math.min(nextProgress, 95);
+        });
+      }, 300);
+      
+      // Upload the image
+      const { error: uploadError } = await supabase.storage
+        .from('item-images')
+        .upload(filePath, file);
+        
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+      
+      if (uploadError) {
+        throw new Error(`Error uploading image: ${uploadError.message}`);
+      }
+      
+      // Get public URL
+      const { data: publicUrlData } = supabase.storage
+        .from('item-images')
+        .getPublicUrl(filePath);
+        
+      return publicUrlData.publicUrl;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      return null;
+    } finally {
+      setTimeout(() => {
+        setIsUploading(false);
+      }, 500); // Keep the 100% state visible briefly
+    }
+  };
+
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     
@@ -57,23 +104,11 @@ export const useReportForm = (initialType: 'lost' | 'found') => {
       
       // Upload image if available
       if (imageFile) {
-        const fileExt = imageFile.name.split('.').pop();
-        const filePath = `${uuidv4()}.${fileExt}`;
+        imageUrl = await uploadImage(imageFile);
         
-        const { error: uploadError } = await supabase.storage
-          .from('item-images')
-          .upload(filePath, imageFile);
-          
-        if (uploadError) {
-          throw new Error(`Error uploading image: ${uploadError.message}`);
+        if (!imageUrl) {
+          throw new Error("Failed to upload image");
         }
-        
-        // Get public URL
-        const { data: publicUrlData } = supabase.storage
-          .from('item-images')
-          .getPublicUrl(filePath);
-          
-        imageUrl = publicUrlData.publicUrl;
       }
       
       // Insert item into database
@@ -130,7 +165,9 @@ export const useReportForm = (initialType: 'lost' | 'found') => {
     isSubmitting,
     imagePreview,
     handleImageChange,
-    onSubmit
+    onSubmit,
+    uploadProgress,
+    isUploading
   };
 };
 

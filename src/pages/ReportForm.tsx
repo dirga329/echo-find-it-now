@@ -31,7 +31,9 @@ const ReportForm = () => {
     isSubmitting, 
     imagePreview, 
     handleImageChange, 
-    onSubmit 
+    onSubmit,
+    uploadProgress,
+    isUploading
   } = useReportForm(initialType as 'lost' | 'found');
 
   // Pre-fill contact info if user is logged in
@@ -73,6 +75,8 @@ const ReportForm = () => {
                     <ImageUploadForm 
                       onImageChange={handleImageChange}
                       imagePreview={imagePreview}
+                      uploadProgress={uploadProgress}
+                      isUploading={isUploading}
                     />
                   </div>
                   
@@ -84,7 +88,7 @@ const ReportForm = () => {
                     <Button type="button" variant="outline" asChild>
                       <Link to="/">Cancel</Link>
                     </Button>
-                    <Button type="submit" disabled={isSubmitting}>
+                    <Button type="submit" disabled={isSubmitting || isUploading}>
                       {isSubmitting ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
