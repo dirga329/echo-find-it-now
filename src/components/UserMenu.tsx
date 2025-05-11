@@ -9,11 +9,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { UserRound, LogOut } from 'lucide-react';
+import { UserRound, LogOut, LayoutDashboard, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const UserMenu = () => {
-  const { session, displayName, logout, UserAvatar } = useAuth();
+  const { session, displayName, logout, UserAvatar, profile } = useAuth();
+  
+  // Simple admin check - can be replaced with proper role-based logic
+  const isAdmin = profile?.email?.includes('admin');
 
   if (!session) {
     return (
@@ -45,6 +48,7 @@ const UserMenu = () => {
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link to="/dashboard" className="cursor-pointer w-full">
+            <LayoutDashboard className="h-4 w-4 mr-2" />
             My Dashboard
           </Link>
         </DropdownMenuItem>
@@ -53,6 +57,19 @@ const UserMenu = () => {
             Report Item
           </Link>
         </DropdownMenuItem>
+        
+        {isAdmin && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link to="/admin" className="cursor-pointer w-full text-echo-blue">
+                <ShieldCheck className="h-4 w-4 mr-2" />
+                Admin Dashboard
+              </Link>
+            </DropdownMenuItem>
+          </>
+        )}
+        
         <DropdownMenuSeparator />
         <DropdownMenuItem 
           className="cursor-pointer flex items-center text-red-600"

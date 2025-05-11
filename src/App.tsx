@@ -10,6 +10,7 @@ import SearchPage from "./pages/SearchPage";
 import ItemDetail from "./pages/ItemDetail";
 import ReportForm from "./pages/ReportForm";
 import DashboardPage from "./pages/DashboardPage";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import About from "./pages/About";
@@ -36,6 +37,19 @@ const App = () => (
                 <ReportForm />
               </ProtectedRoute>
             } />
+            
+            {/* Admin Routes */}
+            <Route path="/admin" element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/*" element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
