@@ -26,8 +26,8 @@ const Hero = () => {
           </div>
           <div className="flex justify-center items-center">
             <img 
-              src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158" 
-              alt="Person looking for lost item" 
+              src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e" 
+              alt="White robot near brown wall" 
               className="rounded-lg shadow-lg max-h-80 object-cover"
             />
           </div>
