@@ -42,8 +42,8 @@ const Index = () => {
         
         <section className="py-16 bg-echo-gray">
           <div className="echo-container space-y-16">
-            <RecentItems title="Recently Lost Items" type="lost" limit={4} />
-            <RecentItems title="Recently Found Items" type="found" limit={4} />
+            <RecentItems title="Recently Lost Items" type="lost" limit={3} />
+            <RecentItems title="Recently Found Items" type="found" limit={3} />
           </div>
         </section>
         

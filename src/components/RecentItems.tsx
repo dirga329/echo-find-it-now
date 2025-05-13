@@ -14,74 +14,76 @@ const RecentItems = ({ title, type = 'all', limit = 8 }: RecentItemsProps) => {
   
   // In a real application, this would be an API call
   useEffect(() => {
-    // Updated sample data with more accurate descriptions matching the images
+    // Updated sample data with names matching the images
     const sampleItems: Item[] = [
       {
         id: '1',
-        name: 'MacBook Pro with Stickers',
+        name: 'White DJI Drone',
         type: 'lost',
         category: 'electronics',
-        location: 'University Library, Room 202',
+        location: 'City Park, Near Lake',
         date: '2023-05-06',
-        image: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b',
-        description: 'Lost my MacBook Pro with programming stickers on the cover. Last seen in the library study area.'
+        image: 'https://images.unsplash.com/photo-1487887235947-a955ef187fcc',
+        description: 'Lost my DJI drone while filming in the park. It was flying near the lake area when I lost control.'
       },
       {
         id: '2',
-        name: 'Golden Retriever - Max',
+        name: 'Orange and White Tabby Cat',
         type: 'lost',
         category: 'pets',
-        location: 'Central Park, Near Playground',
+        location: 'Residential Area, Oak Street',
         date: '2023-05-05',
         image: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901',
-        description: 'My golden retriever Max went missing during our afternoon walk. He has a red collar with contact information.'
+        description: 'My orange and white tabby cat went missing from our front yard. Very friendly and responds to "Whiskers".'
       },
       {
         id: '3',
-        name: 'Black Leather Wallet',
-        type: 'found',
-        category: 'accessories',
-        location: 'Coffee Shop, Main Street',
+        name: 'White Robot Toy',
+        type: 'lost',
+        category: 'toys',
+        location: 'Community Center',
         date: '2023-05-04',
-        image: 'https://images.unsplash.com/photo-1721322800607-8c38375eef04',
-        description: 'Found a black leather wallet containing ID cards and credit cards. No cash inside.'
+        image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e',
+        description: 'My son\'s favorite robot toy. It\'s white and about 8 inches tall. Last seen at the community center.'
       },
       {
         id: '4',
-        name: 'Modern Smartphone',
+        name: 'Grey Tabby Kitten',
         type: 'found',
-        category: 'electronics',
-        location: 'Bus Station, Platform 3',
+        category: 'pets',
+        location: 'Near Elementary School',
         date: '2023-05-03',
-        image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158',
-        description: 'Found a smartphone in a blue protective case at the bus station. Screen is intact, phone is locked.'
+        image: 'https://images.unsplash.com/photo-1535268647677-300dbf3d78d1',
+        description: 'Found a small grey tabby kitten wandering near the elementary school. No collar, seems friendly and well-cared for.'
       },
       {
         id: '5',
+        name: 'Brown Wild Deer',
+        type: 'found',
+        category: 'wildlife',
+        location: 'Forest Edge, North Trail',
+        date: '2023-05-02',
+        image: 'https://images.unsplash.com/photo-1439886183900-e79ec0057170',
+        description: 'Found two deer that seem to have wandered from the deeper forest. They\'re by the north trail entrance.'
+      },
+      {
+        id: '6',
+        name: 'Brown Horses',
+        type: 'found',
+        category: 'farm animals',
+        location: 'Meadow Lane, Outside Fence',
+        date: '2023-05-01',
+        image: 'https://images.unsplash.com/photo-1452378174528-3090a4bba7b2',
+        description: 'Found four brown horses outside their enclosure on Meadow Lane. They appear to have escaped from a nearby farm.'
+      },
+      {
+        id: '7',
         name: 'Designer Eyeglasses',
         type: 'lost',
         category: 'accessories',
         location: 'Shopping Mall, Food Court',
-        date: '2023-05-02',
-        description: 'Lost my prescription glasses with tortoise shell frames. I need them to see!'
-      },
-      {
-        id: '6',
-        name: 'Professional Camera Equipment',
-        type: 'lost',
-        category: 'electronics',
-        location: 'City Park, Near Fountain',
-        date: '2023-05-01',
-        description: 'Left my expensive camera gear on a park bench. Black camera bag with Canon DSLR and several lenses.'
-      },
-      {
-        id: '7',
-        name: 'Family Heirloom Ring',
-        type: 'lost',
-        category: 'jewelry',
-        location: 'Beach, Near Lifeguard Station',
         date: '2023-04-30',
-        description: 'Lost my grandmother\'s engagement ring while swimming. It has huge sentimental value.'
+        description: 'Lost my prescription glasses with tortoise shell frames. I need them to see!'
       },
       {
         id: '8',
