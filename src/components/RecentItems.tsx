@@ -14,83 +14,83 @@ const RecentItems = ({ title, type = 'all', limit = 8 }: RecentItemsProps) => {
   
   // In a real application, this would be an API call
   useEffect(() => {
-    // Sample data for demonstration
+    // Updated sample data with more accurate descriptions matching the images
     const sampleItems: Item[] = [
       {
         id: '1',
-        name: 'iPhone 13 Pro',
+        name: 'MacBook Pro with Stickers',
         type: 'lost',
         category: 'electronics',
-        location: 'Central Park, Near Fountain',
+        location: 'University Library, Room 202',
         date: '2023-05-06',
-        image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158',
-        description: 'Lost my iPhone 13 Pro with a blue case. Last seen near the central fountain.'
+        image: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b',
+        description: 'Lost my MacBook Pro with programming stickers on the cover. Last seen in the library study area.'
       },
       {
         id: '2',
-        name: 'Golden Retriever Dog',
+        name: 'Golden Retriever - Max',
         type: 'lost',
         category: 'pets',
-        location: 'Downtown, Main Street',
+        location: 'Central Park, Near Playground',
         date: '2023-05-05',
         image: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901',
-        description: 'Lost my golden retriever named Max. He has a red collar with contact information.'
+        description: 'My golden retriever Max went missing during our afternoon walk. He has a red collar with contact information.'
       },
       {
         id: '3',
-        name: 'Car Keys with Red Keychain',
+        name: 'Black Leather Wallet',
         type: 'found',
-        category: 'keys',
-        location: 'Shopping Mall, Food Court',
+        category: 'accessories',
+        location: 'Coffee Shop, Main Street',
         date: '2023-05-04',
-        description: 'Found car keys with a distinctive red keychain and several keys attached.'
+        image: 'https://images.unsplash.com/photo-1721322800607-8c38375eef04',
+        description: 'Found a black leather wallet containing ID cards and credit cards. No cash inside.'
       },
       {
         id: '4',
-        name: 'Black Wallet',
+        name: 'Modern Smartphone',
         type: 'found',
-        category: 'accessories',
+        category: 'electronics',
         location: 'Bus Station, Platform 3',
         date: '2023-05-03',
-        image: 'https://images.unsplash.com/photo-1721322800607-8c38375eef04',
-        description: 'Found a black leather wallet with credit cards and ID. No cash inside.'
+        image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158',
+        description: 'Found a smartphone in a blue protective case at the bus station. Screen is intact, phone is locked.'
       },
       {
         id: '5',
-        name: 'Prescription Glasses',
+        name: 'Designer Eyeglasses',
         type: 'lost',
         category: 'accessories',
-        location: 'Library, Second Floor',
+        location: 'Shopping Mall, Food Court',
         date: '2023-05-02',
         description: 'Lost my prescription glasses with tortoise shell frames. I need them to see!'
       },
       {
         id: '6',
-        name: 'MacBook Pro Laptop',
+        name: 'Professional Camera Equipment',
         type: 'lost',
         category: 'electronics',
-        location: 'Coffee Shop on 5th Avenue',
+        location: 'City Park, Near Fountain',
         date: '2023-05-01',
-        image: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b',
-        description: 'Left my MacBook Pro (13-inch, 2019) at a coffee shop. It has stickers on the cover.'
+        description: 'Left my expensive camera gear on a park bench. Black camera bag with Canon DSLR and several lenses.'
       },
       {
         id: '7',
-        name: 'Diamond Engagement Ring',
+        name: 'Family Heirloom Ring',
         type: 'lost',
         category: 'jewelry',
         location: 'Beach, Near Lifeguard Station',
         date: '2023-04-30',
-        description: 'Lost my diamond engagement ring while swimming. It has huge sentimental value.'
+        description: 'Lost my grandmother\'s engagement ring while swimming. It has huge sentimental value.'
       },
       {
         id: '8',
-        name: 'Blue Backpack',
+        name: 'Blue Backpack with Textbooks',
         type: 'found',
         category: 'bags',
         location: 'Train Station, Platform 2',
         date: '2023-04-29',
-        description: 'Found a blue North Face backpack containing books and a water bottle.'
+        description: 'Found a blue North Face backpack containing college textbooks and a water bottle.'
       }
     ];
     

@@ -3,7 +3,6 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Hero from '@/components/Hero';
 import RecentItems from '@/components/RecentItems';
-import SearchBar from '@/components/SearchBar';
 import CategoriesGrid from '@/components/CategoriesGrid';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -11,23 +10,6 @@ import { useToast } from '@/components/ui/use-toast';
 
 const Index = () => {
   const { toast } = useToast();
-
-  const handleSearch = (query: string) => {
-    if (!query.trim()) {
-      toast({
-        title: 'Empty search',
-        description: 'Please enter a search term',
-        variant: 'destructive',
-      });
-      return;
-    }
-    
-    // In a real app, this would navigate to search results
-    toast({
-      title: 'Search initiated',
-      description: `Searching for "${query}"`,
-    });
-  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -41,7 +23,6 @@ const Index = () => {
               How can we help you today?
             </h2>
             <div className="flex flex-col items-center mb-12">
-              <SearchBar onSearch={handleSearch} />
               <div className="flex flex-wrap justify-center gap-4 mt-4">
                 <Link to="/report?type=lost">
                   <Button variant="outline">I lost an item</Button>
