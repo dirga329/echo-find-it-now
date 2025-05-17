@@ -1,4 +1,6 @@
 
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Hero from '@/components/Hero';
@@ -8,8 +10,29 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
 
+interface LocationState {
+  reportSuccess?: boolean;
+  reportType?: 'lost' | 'found';
+}
+
 const Index = () => {
   const { toast } = useToast();
+  const location = useLocation();
+  const state = location.state as LocationState;
+
+  // Show success message when redirected from successful report submission
+  useEffect(() => {
+    if (state?.reportSuccess) {
+      const type = state.reportType || 'lost';
+      toast({
+        title: "Report Submitted Successfully!",
+        description: `Your ${type} item report has been added and is now visible in the Recently ${type === 'lost' ? 'Lost' : 'Found'} Items section.`,
+      });
+      
+      // Clear the location state to prevent showing the toast again on page refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [state, toast]);
 
   return (
     <div className="min-h-screen flex flex-col">

@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { formSchema } from '@/components/report/ItemDetailsForm';
+import { format } from 'date-fns';
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -28,6 +29,7 @@ export const useReportForm = (initialType: 'lost' | 'found') => {
       type: initialType,
       name: "",
       category: "",
+      date: new Date(),
       time: "",
       location: "",
       description: "",
@@ -145,7 +147,12 @@ export const useReportForm = (initialType: 'lost' | 'found') => {
       
       // Redirect to homepage after successful submission
       setTimeout(() => {
-        navigate('/');
+        navigate('/', { 
+          state: { 
+            reportSuccess: true,
+            reportType: data.type 
+          } 
+        });
       }, 2000);
       
     } catch (error) {
@@ -170,6 +177,3 @@ export const useReportForm = (initialType: 'lost' | 'found') => {
     isUploading
   };
 };
-
-// Import this separately to avoid circular dependency
-import { format } from 'date-fns';
