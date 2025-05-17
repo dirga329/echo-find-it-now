@@ -20,7 +20,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 
-interface FilterValues {
+export interface FilterValues {
   type: string;
   category: string;
   date: Date | undefined;
@@ -127,6 +127,7 @@ const FilterPanel = ({ onFilter }: FilterPanelProps) => {
                   selected={filters.date}
                   onSelect={(date) => handleFilterChange('date', date)}
                   initialFocus
+                  className="p-3 pointer-events-auto"
                 />
               </PopoverContent>
             </Popover>
