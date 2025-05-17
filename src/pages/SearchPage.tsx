@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import SearchBar from '@/components/SearchBar';
@@ -8,6 +7,20 @@ import ItemCard, { Item } from '@/components/ItemCard';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const SearchPage = () => {
   const { toast } = useToast();
@@ -15,6 +28,16 @@ const SearchPage = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(false);
   const [noResults, setNoResults] = useState(false);
+  const [sortOrder, setSortOrder] = useState('recent');
+  
+  // New state variables for autocomplete filters
+  const [selectedType, setSelectedType] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [locationQuery, setLocationQuery] = useState('');
+
+  // Types and categories for autocomplete
+  const itemTypes = ['all', 'lost', 'found'];
+  const itemCategories = ['all', 'electronics', 'pets', 'keys', 'accessories', 'documents', 'clothing', 'jewelry', 'other'];
 
   // Sample data for demonstration
   const sampleItems: Item[] = [
@@ -80,77 +103,101 @@ const SearchPage = () => {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
+    applyFiltersAndSearch(query, selectedType, selectedCategory, locationQuery);
+  };
+
+  const handleTypeChange = (type: string) => {
+    setSelectedType(type);
+    applyFiltersAndSearch(searchQuery, type, selectedCategory, locationQuery);
+  };
+  
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    applyFiltersAndSearch(searchQuery, selectedType, category, locationQuery);
+  };
+  
+  const handleLocationChange = (location: string) => {
+    setLocationQuery(location);
+    applyFiltersAndSearch(searchQuery, selectedType, selectedCategory, location);
+  };
+
+  const applyFiltersAndSearch = (query: string, type: string, category: string, location: string) => {
     setLoading(true);
     
     // Simulate API call with setTimeout
     setTimeout(() => {
-      if (!query.trim()) {
-        setItems([]);
-        setNoResults(false);
-        setLoading(false);
-        return;
+      let results = sampleItems;
+      
+      // Filter by search query
+      if (query.trim()) {
+        results = results.filter(item => 
+          item.name.toLowerCase().includes(query.toLowerCase()) ||
+          item.description.toLowerCase().includes(query.toLowerCase())
+        );
       }
       
-      // Filter items based on search query (case-insensitive)
-      const results = sampleItems.filter(item => 
-        item.name.toLowerCase().includes(query.toLowerCase()) ||
-        item.description.toLowerCase().includes(query.toLowerCase())
-      );
+      // Filter by item type
+      if (type !== 'all') {
+        results = results.filter(item => item.type === type);
+      }
+      
+      // Filter by category
+      if (category !== 'all') {
+        results = results.filter(item => item.category === category);
+      }
+      
+      // Filter by location
+      if (location.trim()) {
+        results = results.filter(item => 
+          item.location.toLowerCase().includes(location.toLowerCase())
+        );
+      }
+      
+      // Apply sorting
+      if (sortOrder === 'recent') {
+        results = [...results].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      } else if (sortOrder === 'oldest') {
+        results = [...results].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      } else if (sortOrder === 'az') {
+        results = [...results].sort((a, b) => a.name.localeCompare(b.name));
+      } else if (sortOrder === 'za') {
+        results = [...results].sort((a, b) => b.name.localeCompare(a.name));
+      }
       
       setItems(results);
       setNoResults(results.length === 0);
       setLoading(false);
       
+      // Show toast with results count
       toast({
         title: `Search Results: ${results.length}`,
-        description: `Found ${results.length} items matching "${query}"`,
+        description: `Found ${results.length} items matching your criteria`,
       });
     }, 800);
   };
   
-  const handleFilter = (filters: any) => {
-    setLoading(true);
+  const handleSortChange = (value: string) => {
+    setSortOrder(value);
     
-    // Simulate API call with setTimeout
-    setTimeout(() => {
-      // Apply filters to sample data
-      let results = sampleItems;
-      
-      if (filters.type !== 'all') {
-        results = results.filter(item => item.type === filters.type);
-      }
-      
-      if (filters.category !== 'all') {
-        results = results.filter(item => item.category === filters.category);
-      }
-      
-      if (filters.location !== 'all') {
-        results = results.filter(item => item.location.toLowerCase().includes(filters.location.toLowerCase()));
-      }
-      
-      if (filters.date) {
-        const filterDate = new Date(filters.date).toISOString().split('T')[0];
-        results = results.filter(item => item.date === filterDate);
-      }
-      
-      // If search query exists, also filter by that
-      if (searchQuery.trim()) {
-        results = results.filter(item => 
-          item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.description.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-      }
-      
-      setItems(results);
-      setNoResults(results.length === 0);
-      setLoading(false);
-      
-      toast({
-        title: `Filter Results: ${results.length}`,
-        description: `Found ${results.length} items with the selected filters`,
-      });
-    }, 800);
+    let sortedItems = [...items];
+    if (value === 'recent') {
+      sortedItems.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    } else if (value === 'oldest') {
+      sortedItems.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    } else if (value === 'az') {
+      sortedItems.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (value === 'za') {
+      sortedItems.sort((a, b) => b.name.localeCompare(a.name));
+    }
+    
+    setItems(sortedItems);
   };
+
+  // Initial load - can be empty or show all items
+  useEffect(() => {
+    // Optional: Load all items initially
+    // applyFiltersAndSearch('', 'all', 'all', '');
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -168,8 +215,69 @@ const SearchPage = () => {
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div className="lg:col-span-1">
-              <FilterPanel onFilter={handleFilter} />
+            <div className="lg:col-span-1 bg-white p-4 rounded-lg shadow">
+              <h2 className="font-semibold text-lg mb-4">Quick Filters</h2>
+              
+              {/* Type Filter with Dropdown */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Item Type</label>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="w-full justify-between">
+                      {selectedType === 'all' ? 'All Types' : selectedType.charAt(0).toUpperCase() + selectedType.slice(1)}
+                      <span className="sr-only">Toggle menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-full">
+                    {itemTypes.map((type) => (
+                      <DropdownMenuItem 
+                        key={type}
+                        onClick={() => handleTypeChange(type)}
+                      >
+                        {type === 'all' ? 'All Types' : type.charAt(0).toUpperCase() + type.slice(1)}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              
+              {/* Category Filter with Dropdown */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Category</label>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="w-full justify-between">
+                      {selectedCategory === 'all' ? 'All Categories' : selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
+                      <span className="sr-only">Toggle menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-full">
+                    {itemCategories.map((category) => (
+                      <DropdownMenuItem 
+                        key={category}
+                        onClick={() => handleCategoryChange(category)}
+                      >
+                        {category === 'all' ? 'All Categories' : category.charAt(0).toUpperCase() + category.slice(1)}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              
+              {/* Location Filter with Text Input */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Location</label>
+                <Input
+                  type="text"
+                  placeholder="Enter location..."
+                  value={locationQuery}
+                  onChange={(e) => handleLocationChange(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              
+              {/* Keep the original FilterPanel for advanced filters */}
+              <FilterPanel onFilter={applyFiltersAndSearch} />
             </div>
             
             <div className="lg:col-span-3">
@@ -187,7 +295,13 @@ const SearchPage = () => {
                   <p className="text-gray-500 text-center mb-4">
                     We couldn't find any items matching your search or filters.
                   </p>
-                  <Button onClick={() => handleFilter({ type: 'all', category: 'all', date: undefined, location: 'all' })}>
+                  <Button onClick={() => {
+                    setSelectedType('all');
+                    setSelectedCategory('all');
+                    setLocationQuery('');
+                    setSearchQuery('');
+                    applyFiltersAndSearch('', 'all', 'all', '');
+                  }}>
                     Clear Filters
                   </Button>
                 </div>
@@ -196,8 +310,8 @@ const SearchPage = () => {
                   <div className="flex justify-between items-center mb-4">
                     <p className="text-sm text-gray-600">Showing {items.length} results</p>
                     <Select
-                      value="recent"
-                      onValueChange={() => {}}
+                      value={sortOrder}
+                      onValueChange={handleSortChange}
                     >
                       <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Sort by" />
@@ -234,14 +348,5 @@ const SearchPage = () => {
     </div>
   );
 };
-
-// Importing for the sorting dropdown
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 export default SearchPage;
